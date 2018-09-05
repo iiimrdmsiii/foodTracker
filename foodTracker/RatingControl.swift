@@ -8,10 +8,20 @@
 
 import UIKit
 
-class RatingControl: UIStackView {
+@IBDesignable class RatingControl: UIStackView {
     
     // MARK: Properties
     private var ratingButton = [UIButton]()
+    @IBInspectable var starSize = CGSize(width: 44.0, height: 44.0){
+        didSet {
+            setupButtons()
+        }
+    }
+    @IBInspectable var starCount: Int = 5 {
+        didSet {
+            setupButtons()
+        }
+    }
     
     var rating = 0
     
@@ -27,7 +37,7 @@ class RatingControl: UIStackView {
         setupButtons()
     }
     
-    // MARK: Button Action
+    // MARK: Button Action added w/ objc to fix the xcode
     
     @objc func ratingButtonTapped(button: UIButton) {
         print("Button pressed 👍")
@@ -37,7 +47,14 @@ class RatingControl: UIStackView {
     
     private func setupButtons() {
         
-        for _ in 0..<5{
+        // Clear any existing buttons
+        for button in ratingButton {
+            removeArrangedSubview(button)
+            button.removeFromSuperview()
+        }
+        ratingButton.removeAll()
+        
+        for _ in 0..<starCount{
         // create the button
         let button = UIButton()
         button.backgroundColor = UIColor.red
@@ -46,11 +63,10 @@ class RatingControl: UIStackView {
         
         // Add constraints
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 44.0).isActive = true
+        button.heightAnchor.constraint(equalToConstant: starSize.height).isActive = true
+        button.widthAnchor.constraint(equalToConstant: starSize.width).isActive = true
         
         // Set up button action
-        
         button.addTarget(self, action: #selector(RatingControl.ratingButtonTapped(button:)), for: .touchUpInside)
         
         
